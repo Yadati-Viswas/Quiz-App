@@ -1,0 +1,25 @@
+import { AtSymbolIcon, ShareIcon, LinkIcon} from "@heroicons/react/24/solid";
+
+export default function Footer({ darkMode }) {
+    return (
+        <footer className={`${darkMode ? "bg-indigo-950" : "bg-blue-200"} py-8`}>
+        <div className="max-w-6xl mx-auto px-10 flex justify-between items-center">
+          <p className="text-sm">&copy; 2025 QuizApp. All rights reserved.</p>
+          <a href="/privacy" className="underline hover:text-indigo-300 text-sm">
+            Privacy Policy
+          </a>
+          <div className="flex space-x-6">
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-300">
+              <AtSymbolIcon className="h-6 w-6" />
+            </a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-300">
+              <ShareIcon className="h-6 w-6" />
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-300">
+              <LinkIcon className="h-6 w-6" />
+            </a>
+          </div>
+        </div>
+      </footer>
+    );
+}
