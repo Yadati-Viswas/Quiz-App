@@ -8,7 +8,7 @@ export default function Body({ darkMode }) {
       { name: "Charlie Lee", score: 89, quiz: "Science Quiz" },
     ];
     return (
-        <main className="px-10 py-16 max-w-6xl mx-auto">
+        <main className="px-10 py-16 max-w-6xl mx-auto border-b">
         {/* intro */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -24,29 +24,77 @@ export default function Body({ darkMode }) {
         </motion.section>
 
         {/* top scorers */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.15 }}
-          className="mb-20">
-          <h2 className="text-3xl font-semibold mb-8 text-center">Top Scorers</h2>
-          <div className="grid grid-cols-3 gap-8">
+       <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, delay: 0.1 }}
+        className="mb-20"
+      >
+        <h2 className="text-3xl font-semibold mb-8 text-center">Top Scorers</h2>
+
+        {/* improved marquee: use a track that contains two copies and translate by -50% of the track */}
+        <style>{`
+          .marquee { position: relative; overflow: hidden; width: 100%; }
+          .marquee-track {
+            display: flex;
+            gap: 1.5rem;
+            align-items: stretch;
+            width: max-content; /* track grows to fit two copies */
+            will-change: transform;
+            animation: marquee 7s linear infinite;
+          }
+          .marquee-track:hover { animation-play-state: paused; }
+
+          /* translate the whole track by half its own width (one copy) */
+          @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+
+          /* ensure cards don't shrink and keep spacing identical between copies */
+          .marquee-card { flex: 0 0 auto; min-width: 220px; }
+        `}</style>
+            <div className="marquee">
+          <div className="marquee-track">
             {topScorers.map((s, i) => (
-              <motion.div key={i}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.1 }}
-                className={`${darkMode ? "bg-indigo-800" : "bg-white"}
-                            p-8 rounded-xl shadow-lg hover:shadow-2xl`}>
-                <TrophyIcon className={`h-12 w-12 mx-auto mb-5
-                                        ${darkMode ? "text-yellow-400" : "text-yellow-500"}`} />
-                <h3 className="text-xl font-bold text-center">{s.name}</h3>
-                <p className="text-center mt-2">Score: {s.score}/100</p>
-                <p className="text-center text-sm mt-1">Quiz: {s.quiz}</p>
-              </motion.div>
+              <div
+                key={`a-${i}`}
+                className={`marquee-card p-6 rounded-xl shadow-lg hover:shadow-2xl transition-colors
+                  ${darkMode ? "bg-slate-800 text-white" : "bg-white text-black"}`}
+              >
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.28, delay: i * 0.04 }}
+                >
+                  <TrophyIcon className="h-12 w-12 mx-auto mb-4 text-yellow-500" />
+                  <h3 className="text-xl font-bold text-center">{s.name}</h3>
+                  <p className="text-center mt-2">Score: {s.score}/100</p>
+                  <p className="text-center text-sm mt-1">Quiz: {s.quiz}</p>
+                </motion.div>
+              </div>
+            ))}
+             {topScorers.map((s, i) => (
+              <div
+                key={`b-${i}`}
+                className={`marquee-card p-6 rounded-xl shadow-lg hover:shadow-2xl transition-colors
+                  ${darkMode ? "bg-slate-800 text-white" : "bg-white text-black"}`}
+              >
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.28, delay: i * 0.04 }}
+                >
+                  <TrophyIcon className="h-12 w-12 mx-auto mb-4 text-yellow-500" />
+                  <h3 className="text-xl font-bold text-center">{s.name}</h3>
+                  <p className="text-center mt-2">Score: {s.score}/100</p>
+                  <p className="text-center text-sm mt-1">Quiz: {s.quiz}</p>
+                </motion.div>
+              </div>
             ))}
           </div>
-        </motion.section>
+        </div>
+      </motion.section>
 
         {/* action buttons */}
         <motion.section

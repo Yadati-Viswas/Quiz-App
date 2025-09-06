@@ -4,8 +4,8 @@ function Navbar({ darkMode, setDarkMode }) {
   return (
     <div>
       {/* NAVBAR (laptop view) */}
-      <nav className={`flex items-center justify-between px-10 py-5
-                       ${darkMode ? "bg-indigo-950" : "bg-blue-200"} shadow-md`}>
+      <nav className={`flex items-center justify-between px-10 py-5 border-b
+                       ${darkMode ? "bg-[#181C14]" : "bg-blue-200"} shadow-md`}>
         {/* logo + name */}
         <div className="flex items-center space-x-3">
           <AcademicCapIcon className={`h-9 w-9 ${darkMode ? "text-indigo-400" : "text-blue-600"}`} />

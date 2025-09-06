@@ -2,7 +2,7 @@ import { AtSymbolIcon, ShareIcon, LinkIcon} from "@heroicons/react/24/solid";
 
 export default function Footer({ darkMode }) {
     return (
-        <footer className={`${darkMode ? "bg-indigo-950" : "bg-blue-200"} py-8`}>
+        <footer className={`border-b ${darkMode ? "border-white bg-[#181C14]" : "bg-blue-200"} py-8`}>
         <div className="max-w-6xl mx-auto px-10 flex justify-between items-center">
           <p className="text-sm">&copy; 2025 QuizApp. All rights reserved.</p>
           <a href="/privacy" className="underline hover:text-indigo-300 text-sm">
