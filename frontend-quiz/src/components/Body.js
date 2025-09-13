@@ -8,14 +8,14 @@ export default function Body({ darkMode }) {
       { name: "Charlie Lee", score: 89, quiz: "Science Quiz" },
     ];
     return (
-        <main className="px-10 py-16 max-w-6xl mx-auto border-b">
+      <div>
         {/* intro */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-16">
-          <h1 className="text-5xl font-extrabold mb-4">Welcome to QuizApp</h1>
+          <h1 className="text-5xl font-extrabold mb-4">Welcome to OmniQuiz</h1>
           <p className="text-xl max-w-3xl mx-auto">
             Teachers can craft engaging quizzes for their classes,
             while everyone else can jump in, test their knowledge,
@@ -112,6 +112,6 @@ export default function Body({ darkMode }) {
             </button>
           ))}
         </motion.section>
-      </main>
+      </div>
     );
 }
