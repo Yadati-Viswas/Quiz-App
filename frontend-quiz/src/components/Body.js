@@ -8,7 +8,7 @@ export default function Body({ darkMode }) {
       { name: "Charlie Lee", score: 89, quiz: "Science Quiz" },
     ];
     return (
-        <main className="px-10 py-16 max-w-6xl mx-auto border-b">
+      <div>
         {/* intro */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -112,6 +112,6 @@ export default function Body({ darkMode }) {
             </button>
           ))}
         </motion.section>
-      </main>
+      </div>
     );
 }
