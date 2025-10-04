@@ -5,10 +5,12 @@ import org.omniquiz.generatequiz.dto.GenerateQuizRequest;
 import org.omniquiz.generatequiz.dto.GeneratedQuizQuestionsDTO;
 import org.omniquiz.generatequiz.service.GenerateQuizQuestionswithGeminiService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.GET, RequestMethod.POST}, allowedHeaders = "*")
 @RestController
 @RequestMapping("/v1-api/quiz")
 public class GenerateQuizQuestionswithGeminiController {
@@ -20,11 +22,16 @@ public class GenerateQuizQuestionswithGeminiController {
         this.generateQuizQuestionswithGeminiService = generateQuizQuestionswithGeminiService;
     }
 
-    @GetMapping("/generate-questions")
-    public List<GeneratedQuizQuestionsDTO> generateQuizQuestions(@RequestBody GenerateQuizRequest body) throws JsonProcessingException {
-        String prompt = body.getPrompt();
-        List<GeneratedQuizQuestionsDTO> questions = generateQuizQuestionswithGeminiService.generateContent(prompt);
-        return questions;
+    @PostMapping("/generate-questions")
+    public ResponseEntity<List<GeneratedQuizQuestionsDTO>> generateQuizQuestions(@RequestBody GenerateQuizRequest body) throws JsonProcessingException {
+        try {
+            String prompt = body.getPrompt();
+            System.out.println(prompt);
+            List<GeneratedQuizQuestionsDTO> questions = generateQuizQuestionswithGeminiService.generateContent(prompt);
+            return ResponseEntity.ok(questions);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
 }

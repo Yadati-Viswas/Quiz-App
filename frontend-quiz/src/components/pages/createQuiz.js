@@ -31,7 +31,19 @@ export default function CreateQuizPage() {
   };
 
   const handleSubmit = () => {
-    alert("Quiz submitted! (Functionality to be implemented)");
+    
+    const quizData = {
+      title: quizTitle,
+      category: quizCategory,
+      refferal: quizRefferal,
+      questions: questions.map(q => ({
+        question: q.question,
+        options: q.options,
+        correctIndex: q.correctIndex
+      }))
+    };
+    console.log("Quiz Data:", quizData);
+    alert("Quiz submitted! Check console for data.");
   }
     const handlePreview = () => {
     // Validate before preview
@@ -85,7 +97,7 @@ export default function CreateQuizPage() {
             />
             <input
               type="text"
-              placeholder="Quiz Refferal (optional)"
+              placeholder="Quiz Referral (optional)"
               value={quizRefferal}
               onChange={(e) => setQuizRefferal(e.target.value)}
               className={`w-full md:w-1/2 p-3 mb-6 rounded-lg border ${darkMode ? "bg-[#23272f] border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"} focus:outline-none focus:ring-2 focus:ring-blue-500`}

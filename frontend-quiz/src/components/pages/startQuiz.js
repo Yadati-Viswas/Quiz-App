@@ -2,6 +2,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Layout from "../Layout";
 import { useDarkMode } from "../../contexts/DarkModeContextProvider";
+import { getQuizQuestionsApi } from "../../apis/allApis";
+import { useNavigate } from "react-router-dom";
 
 const categories = [
   "HTML", "History", "JavaScript", "Java", "Python", "Math",
@@ -16,6 +18,8 @@ export default function StartQuizPage() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] = useState("");
+  const [loading, setLoading] = useState(false);
+  const Navigate = useNavigate();
 
   const handleCategoryClick = (cat) => {
     if(cat === undefined) {
@@ -31,15 +35,33 @@ export default function StartQuizPage() {
     setSelectedDifficulty(""); // reset difficulty
   };
 
-  const handleStartQuiz = () => {
-    // TODO: Navigate to quiz page or start quiz logic
+  const handleStartQuiz = async () => {
     setShowPopup(false);
+    setLoading(true);
     alert(`Starting ${selectedCategory} quiz (${selectedDifficulty})`);
+    const response = await getQuizQuestionsApi(selectedCategory, selectedDifficulty);
+    setLoading(false);
+    console.log("API Response:", response.data);
+    Navigate('/quiz-started', { state: { allQuestions: response.data } });
   };
+
+  if(loading){
+      return (
+      <Layout>  
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className={`flex flex-col items-center space-y-8 ${darkMode ? "text-white" : "text-gray-900"}`}>
+          <h1 className="text-4xl font-bold mb-4">Loading...</h1>
+      </motion.section>
+      </Layout>
+    )}
 
   return (
     <Layout>
-      <motion.section
+      
+        <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
