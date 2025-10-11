@@ -19,6 +19,7 @@ export default function StartQuizPage() {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] = useState("");
   const [loading, setLoading] = useState(false);
+  const [numberOfQuestions, setNumberOfQuestions] = useState(5);
   const Navigate = useNavigate();
 
   const handleCategoryClick = (cat) => {
@@ -39,7 +40,7 @@ export default function StartQuizPage() {
     setShowPopup(false);
     setLoading(true);
     alert(`Starting ${selectedCategory} quiz (${selectedDifficulty})`);
-    const response = await getQuizQuestionsApi(selectedCategory, selectedDifficulty);
+    const response = await getQuizQuestionsApi(selectedCategory, selectedDifficulty, numberOfQuestions);
     setLoading(false);
     console.log("API Response:", response.data);
     Navigate('/quiz-started', { state: { allQuestions: response.data } });
@@ -99,10 +100,19 @@ export default function StartQuizPage() {
               exit={{ y: 40 }}
               className={`rounded-xl p-8 w-full max-w-sm
                 ${darkMode ? "bg-[#23272f] text-white" : "bg-white text-gray-900"}
-                shadow-2xl`}
-            >
-              <h2 className="text-2xl font-bold mb-4">Selected Category</h2>
-              <div className="mb-4 text-lg">{selectedCategory}</div>
+                shadow-2xl`} >
+              <div className="flex items-center">
+                <h2 className="text-xl font-bold px-1 mb-4">Selected Category:</h2>
+                <div className="mb-4 font-bold text-xl">{selectedCategory}</div>
+              </div>
+              <div className="mb-6">
+                <label className="block mb-2 font-medium">Enter Number of questions: </label>
+                <input type="number" min="5" max="50" defaultValue="5" className={`w-full p-3 rounded-lg border 
+                  ${darkMode ? "bg-[#23272f] border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"} 
+                  focus:outline-none focus:ring-2 focus:ring-blue-500`} onChange={(e)=>setNumberOfQuestions(e.target.value)}/>
+                <span className={ `${darkMode ? "text-white" : "text-black"} text-sm`}>Max Questions:50, Min Questions:5</span>
+              </div>
+              
               <div className="mb-6">
                 <label className="block mb-2 font-medium">Choose Difficulty:</label>
                 <div className="flex space-x-3">

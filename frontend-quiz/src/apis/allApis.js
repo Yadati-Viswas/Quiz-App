@@ -16,9 +16,9 @@ async function apiCall(method, endpoint, data = null, headers = {}) {
 
 }
 
-async function getQuizQuestionsApi(category, difficulty) {
+async function getQuizQuestionsApi(category, difficulty, numberOfQuestions) {
     return apiCall('POST', `/v1-api/quiz/generate-questions`, {
-        prompt: `Generate 5 multiple-choice questions on ${category} with difficulty level ${difficulty}, covering core concepts. Output ONLY in this JSON array format (no extra text): [
+        prompt: `Generate ${numberOfQuestions} multiple-choice questions on ${category} with difficulty level ${difficulty}, covering core concepts. Output ONLY in this JSON array format (no extra text): [
   {
     "title": "Question 1: Topic",
     "question": "The question text?",
