@@ -7,29 +7,32 @@ async function apiCall(method, endpoint, data = null, headers = {}) {
     const defaultHeaders = { 'Content-Type': 'application/json', };
     const config = { method, url, headers: { ...defaultHeaders, ...headers }, ...(data && { data: data }) };
     try {
+        const start = performance.now();
         const response = await axios(config);
+        const end = performance.now();
+        console.log(`API call to ${endpoint} took ${(end - start).toFixed(2)} ms`);
+        console.log("API Response:", response.data);
         return response;
     } catch (error) {
         console.error("API call error:", error);
         throw error;
     }
-
 }
 
 async function getQuizQuestionsApi(category, difficulty, numberOfQuestions) {
     return apiCall('POST', `/v1-api/quiz/generate-questions`, {
-        prompt: `Generate ${numberOfQuestions} multiple-choice questions on ${category} with difficulty level ${difficulty}, covering core concepts. Output ONLY in this JSON array format (no extra text): [
+        prompt: `Generate ${numberOfQuestions} multiple-choice questions on ${category} with difficulty level ${difficulty}, covering core concepts. Output ONLY a valid JSON array with no additional text, metadata, or wrappers like "AssistantMessage". Do not include code blocks (e.g., \`\`\`json). The JSON must be strictly formatted as: [
   {
     "title": "Question 1: Topic",
     "question": "The question text?",
     "code": "Optional code block as a string, or empty string if none",
-    "options": ["Option1", "Option2", "Option3", "Option4"],
-    "answer": "The correct option",
+    "options": ["a) Option1", "b) Option2", "c) Option3", "d) Option4"],
+    "answer": "c) The correct option",
     "explanation": "Detailed explanation here"
   }
 ]
 Ensure each question has exactly 4 options (a-d). In all string fields (especially "code" and "explanation"), represent newlines as \\n and do not use actual line breaks. Ensure the entire output is strictly valid JSON without any unescaped control characters.`
-    }); 
-    }
+    });
+}
 
 export { getQuizQuestionsApi };

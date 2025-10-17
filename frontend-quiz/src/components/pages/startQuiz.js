@@ -107,10 +107,10 @@ export default function StartQuizPage() {
               </div>
               <div className="mb-6">
                 <label className="block mb-2 font-medium">Enter Number of questions: </label>
-                <input type="number" min="5" max="50" defaultValue="5" className={`w-full p-3 rounded-lg border 
+                <input type="number" min="5" max="100" defaultValue="5" className={`w-full p-3 rounded-lg border 
                   ${darkMode ? "bg-[#23272f] border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"} 
                   focus:outline-none focus:ring-2 focus:ring-blue-500`} onChange={(e)=>setNumberOfQuestions(e.target.value)}/>
-                <span className={ `${darkMode ? "text-white" : "text-black"} text-sm`}>Max Questions:50, Min Questions:5</span>
+                <span className={ `${darkMode ? "text-white" : "text-black"} text-sm`}>Max Questions:100, Min Questions:5</span>
               </div>
               
               <div className="mb-6">
