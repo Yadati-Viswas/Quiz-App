@@ -35,4 +35,12 @@ Ensure each question has exactly 4 options (a-d). In all string fields (especial
     });
 }
 
-export { getQuizQuestionsApi };
+async function singupUser(data) {
+    return apiCall('POST', `/v1-api/users/signup`, data);
+}
+
+async function loginUser(data) {
+    return apiCall('POST', `/v1-api/users/login`, data);
+}
+
+export { getQuizQuestionsApi ,singupUser, loginUser };
