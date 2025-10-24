@@ -3,10 +3,12 @@ import { useForm } from "react-hook-form";
 import Layout from "../Layout";
 import { motion } from "framer-motion";
 import { useDarkMode } from "../../contexts/DarkModeContextProvider";
-import { singupUser } from "../../apis/allApis";
+import { singupUserApi } from "../../apis/allApis";
+import { useNavigate } from "react-router-dom";
 
 export default function SignupPage() {
   const { darkMode } = useDarkMode();
+  const navigate = useNavigate();
   const { register, handleSubmit, watch, formState: { errors, isSubmitting }, } = useForm({
     defaultValues: {
       lastName: "",
@@ -22,9 +24,10 @@ export default function SignupPage() {
   const onSubmit = async (data) => {
     // TODO: call signup API
     console.log("Signup data:", data);
-    const response = await singupUser(data);
+    const response = await singupUserApi(data);
     console.log("Signup API response:", response);
     if(response.status === 201) {
+      navigate("/login");
       alert("Signup submitted (check console)");
     } else {
       alert("Signup failed: " + (response.data?.message || "Unknown error"));

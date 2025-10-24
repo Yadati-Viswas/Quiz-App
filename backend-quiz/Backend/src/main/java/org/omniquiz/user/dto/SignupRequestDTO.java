@@ -1,4 +1,4 @@
-package org.omniquiz.signup.dto;
+package org.omniquiz.user.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

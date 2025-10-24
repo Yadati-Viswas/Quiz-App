@@ -31,7 +31,7 @@ public class SecurityConfig {
                 }))
                 .csrf().disable() // Disable CSRF for simplicity (enable in production)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/v1-api/users/signup", "/v1-api/quiz/**").permitAll() // Cover signup and quiz endpoints
+                        .requestMatchers("/v1-api/users/**", "/v1-api/quiz/**").permitAll() // Cover signup and quiz endpoints
                         .anyRequest().authenticated()
                 );
         return http.build();

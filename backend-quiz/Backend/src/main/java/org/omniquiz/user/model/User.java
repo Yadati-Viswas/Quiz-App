@@ -1,4 +1,4 @@
-package org.omniquiz.signup.model;
+package org.omniquiz.user.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;

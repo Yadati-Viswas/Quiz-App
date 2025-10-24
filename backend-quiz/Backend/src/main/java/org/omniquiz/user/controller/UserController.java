@@ -1,8 +1,10 @@
-package org.omniquiz.signup.controller;
+package org.omniquiz.user.controller;
 
-import org.omniquiz.signup.dto.SignupRequestDTO;
-import org.omniquiz.signup.dto.SignupResponseDTO;
-import org.omniquiz.signup.service.UserService;
+import org.omniquiz.user.dto.LoginRequestDTO;
+import org.omniquiz.user.dto.LoginResponseDTO;
+import org.omniquiz.user.dto.SignupRequestDTO;
+import org.omniquiz.user.dto.SignupResponseDTO;
+import org.omniquiz.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,16 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<SignupResponseDTO> signup(@Valid @RequestBody SignupRequestDTO request) {
         SignupResponseDTO response = userService.signup(request);
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
+        LoginResponseDTO response = userService.login(request);
         if (response.isSuccess()) {
             return ResponseEntity.ok(response);
         } else {
