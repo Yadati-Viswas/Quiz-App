@@ -48,69 +48,16 @@ public class GenerateQuizQuestionswithGeminiService {
         }
 
         try {
-            // Step 1: Get initial response
             String rawResponse = chatModel.call(prompt);
             System.out.println("Raw Response: " + rawResponse);
-
-            // Step 2: Clean and try parsing
-            String cleanedResponse = cleanResponse(rawResponse);
-            System.out.println("Cleaned Response: " + cleanedResponse);
-
-            return parseWithRefinement(cleanedResponse, rawResponse, 0);
+            return mapper.readValue(rawResponse, mapper.getTypeFactory().constructCollectionType(List.class, GeneratedQuizQuestionsDTO.class));
         } catch (Exception e) {
             System.out.println("Unexpected error during generation: " + e.getMessage());
             return Collections.emptyList();
         }
     }
 
-    private List<GeneratedQuizQuestionsDTO> parseWithRefinement(String response, String rawResponse, int attempt) throws JsonProcessingException {
-        try {
-            if (response.isEmpty() || (!response.startsWith("[") && !response.startsWith("{"))) {
-                throw new JsonParseException(null, "Invalid JSON format: " + response);
-            }
-            return mapper.readValue(response, mapper.getTypeFactory().constructCollectionType(List.class, GeneratedQuizQuestionsDTO.class));
-        } catch (JsonProcessingException e) {
-            System.out.println("Parsing failed (attempt " + attempt + "): " + e.getMessage());
-            if (attempt < MAX_REFINEMENT_ATTEMPTS) {
-                return refineAndParse(rawResponse, attempt + 1);
-            }
-            System.out.println("All Attempts Excceeded:");
-            return mapper.readValue(response, mapper.getTypeFactory().constructCollectionType(List.class, GeneratedQuizQuestionsDTO.class));
-        }
-    }
 
-    private List<GeneratedQuizQuestionsDTO> refineAndParse(String rawResponse, int attempt) throws JsonProcessingException {
-        try {
-            // Create refinement prompt
-            String refinementPrompt = String.format(refinementPromptTemplate, rawResponse);
 
-            // Call model again for refinement
-            String refinedResponse = chatModel.call(refinementPrompt);
-            System.out.println("Refined Response (Attempt " + attempt + "): " + refinedResponse);
 
-            // Clean and parse refined response
-            String cleanedRefined = cleanResponse(refinedResponse);
-            System.out.println("Cleaned Refined Response (Attempt " + attempt + "): " + cleanedRefined);
-
-            return parseWithRefinement(cleanedRefined, rawResponse, attempt);
-        } catch (Exception e) {
-            System.out.println("Refinement failed (attempt " + attempt + "): " + e.getMessage());
-            if (attempt < MAX_REFINEMENT_ATTEMPTS) {
-                return refineAndParse(rawResponse, attempt + 1); // Recursive retry
-            }
-            return parseWithRefinement(rawResponse, rawResponse, attempt + 1);
-        }
-    }
-
-    private String cleanResponse(String rawResponse) {
-        return rawResponse.trim()
-                .replaceAll("^\\s*\\\\+\\s*", "") // Remove leading backslashes and whitespace
-                .replaceAll("(?s)^AssistantMessage \\[.*?textContent=\\s*", "")
-                .replaceAll("(?s)^```json\\s*|\\s*```$|^```\\s*|\\s*```$", "")
-                .replaceAll(",\\s*metadata=\\{.*?\\}\\]$", "]")
-                .replaceAll("(?<!\\\\)\\n", "\\\\n")
-                .replaceAll("(?<!\\\\)\\r", "\\\\r")
-                .replaceAll("(?<!\\\\)\\t", "\\\\t")
-                .replaceAll("\\[\\s*\\]", "[]");
-    }
 }

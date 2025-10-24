@@ -73,7 +73,14 @@ public class GenerateQuizQuestionswithGeminiController {
 
         // Check if total questions match the request (optional validation)
         if (questions.size() < totalQuestions) {
-            System.out.println("Warning: Generated " + questions.size() + " questions, expected " + totalQuestions);
+            int remainingQuestionstoGenerate = (totalQuestions - questions.size());
+            System.out.println("Sending another API call to generate remaining questions: "+ remainingQuestionstoGenerate);
+            remainingQuestionstoGenerate /=5;
+            for (int i = 0; i < remainingQuestionstoGenerate/5; i++) {
+                String batchPrompt = prompt.replaceFirst("\\d+", String.valueOf(batchSize));
+                System.out.println("Batch Prompt: " + batchPrompt);
+                futures.add(CompletableFuture.supplyAsync(() -> generateQuizQuestionswithGeminiService.generateContent(batchPrompt)));
+            }
         }
 
         return ResponseEntity.ok(questions);
