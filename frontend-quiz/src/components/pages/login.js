@@ -4,10 +4,12 @@ import { motion } from "framer-motion";
 import { useDarkMode } from "../../contexts/DarkModeContextProvider";
 import { useNavigate } from "react-router-dom";
 import GoogleButton from 'react-google-button';
-import { loginUserApi } from "../../apis/allApis";
-
+import { loginUserApi,postGoogleApi } from "../../apis/allApis";
+import { useAuth } from '../../contexts/AuthContext';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 export default function LoginPage() {
+  const {login} = useAuth();
   const { darkMode } = useDarkMode();
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
@@ -16,16 +18,30 @@ export default function LoginPage() {
       password: "",
     },
   });
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async (credentialResponse) => {
+      const response = await postGoogleApi(credentialResponse.credential);
+      if (response.status === 200) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data));
+        //console.log(response.data);
+        login(response.data);
+        navigate('/');
+      } else {
+        alert(response.message);
+      }
+  };
+  const handleGoogleError = () => {
+      alert('Google Sign In was unsuccessful. Try again later');
   };
   const onSubmit = async (data) => {
-    // TODO: call signup API
-    console.log("Login data:", data);
-    alert("Signup submitted (check console)");
+    //alert("Signup submitted (check console)");
     const response = await loginUserApi(data);
-    console.log("Login API response:", response);
     if(response.status === 200) {
-      navigate("/start-quiz");
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      console.log(response.data.user);
+      login(response.data.user);
+      navigate("/");
     } else {
       alert("Login failed: " + (response.data?.message || "Unknown error"));
     }
@@ -92,7 +108,11 @@ export default function LoginPage() {
         </form>
         <div className="mt-4 flex flex-col items-center">
           <p className="mb-2">or login with</p>
-          <GoogleButton onClick={handleGoogleLogin()} />
+          <GoogleButton >
+            <GoogleOAuthProvider >
+              <GoogleLogin onSuccess={handleGoogleLogin} onError={handleGoogleError} width="100%" />
+            </GoogleOAuthProvider>
+          </GoogleButton>
         </div>  
       </motion.section>
     </Layout>

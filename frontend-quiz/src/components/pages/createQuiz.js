@@ -105,7 +105,7 @@ export default function CreateQuizPage() {
           <div className={`p-3 rounded ${darkMode ? "bg-[#1f2937] border border-gray-600" : "bg-gray-50 border border-gray-200"}`}>
             <strong className={`${darkMode ? "text-yellow-300" : "text-red-600"} mr-2`}>Note:</strong>
             Quiz Category, Question, Options, Choosing answer and Explanation are required fields.
-            <div className="mt-1 text-xs opacity-90">Required fields are validated on Preview/Submit — please fill them before continuing.</div>
+            <div className="mt-1 text-xs">Required fields are validated on Preview/Submit — please fill them before continuing.</div>
           </div>
         </div>
         <div className="w-full max-w-4xl">

@@ -43,4 +43,8 @@ async function loginUserApi(data) {
     return apiCall('POST', `/v1-api/users/login`, data);
 }
 
-export { getQuizQuestionsApi ,singupUserApi, loginUserApi };
+async function postGoogleApi(token) {
+  return apiCall('POST', '/users/google-login', { token });
+}
+
+export { getQuizQuestionsApi ,singupUserApi, loginUserApi, postGoogleApi };
