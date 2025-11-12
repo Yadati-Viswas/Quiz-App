@@ -1,0 +1,73 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend-quiz/Backend
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: testdb
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+        ports: [5432:5432]
+        # Healthcheck for DB readiness
+        options: >-
+          --health-cmd="pg_isready -U testuser"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    env:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/testdb
+      SPRING_DATASOURCE_USERNAME: testuser
+      SPRING_DATASOURCE_PASSWORD: testpass
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+      - name: Build with Maven
+        run: mvn clean package
+      - name: Run tests
+        run: mvn test
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend-quiz
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: frontend-quiz/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('frontend-quiz/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests
+        run: npm test -- --watchAll=false
+      - name: Build
+        run: npm run build
