@@ -58,13 +58,13 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      # - name: Cache node modules
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: frontend-quiz/node_modules
-      #     key: ${{ runner.os }}-node-${{ hashFiles('frontend-quiz/package-lock.json') }}
-      #     restore-keys: ${{ runner.os }}-node-
+          node-version: '24'
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: frontend-quiz/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('frontend-quiz/package-lock.json') }}-${{ github.run_id }}
+          restore-keys: ${{ runner.os }}-node-
       - name: Install dependencies
         run: npm ci
       - name: Run tests
