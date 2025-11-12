@@ -6,12 +6,14 @@ import org.omniquiz.user.model.User;
 @Data
 public class LoginResponseDTO {
     private boolean success;
-    private String message;
+    private String token;
+    private long expiresIn;
     private User user;
 
-    public LoginResponseDTO(boolean success, String message, User user) {
+    public LoginResponseDTO(boolean success, String token, long expiresIn, User user) {
         this.success = success;
-        this.message = message;
+        this.token = token;
+        this.expiresIn=expiresIn;
         this.user = user;
     }
 }

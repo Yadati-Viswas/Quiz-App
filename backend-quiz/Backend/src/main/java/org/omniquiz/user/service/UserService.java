@@ -9,9 +9,9 @@ import org.omniquiz.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
-
-import java.util.regex.Pattern;
 
 @Service
 public class UserService {
@@ -22,7 +22,14 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private final AuthenticationManager authenticationManager;
+
     private final BCryptPasswordEncoder passwordBcyrpt = new BCryptPasswordEncoder();
+
+    public UserService(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
 
     public SignupResponseDTO signup(SignupRequestDTO request) {
         // Validate mandatory fields
@@ -58,24 +65,23 @@ public class UserService {
         return new SignupResponseDTO(true, "Signup successful", savedUser.getId());
     }
 
-    public LoginResponseDTO login(LoginRequestDTO request){
-        if(request.getIdentifier()==null || request.getPassword()==null){
-            return new LoginResponseDTO(false, "All mandatory fields are required", null);
+    public User login(LoginRequestDTO request){
+        if (request.getIdentifier() == null || request.getPassword() == null) {
+            return null;
         }
-        User user = userRepository.findByUsernameOrEmail(request.getIdentifier(),request.getIdentifier())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        if (validateLogin(request.getIdentifier(), request.getPassword())) {
-            return new LoginResponseDTO(true, "Login successful", user);
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getIdentifier(),
+                            request.getPassword()
+                    )
+            );
+            User user = userRepository.findByUsernameOrEmail(request.getIdentifier(), request.getIdentifier())
+                    .orElseThrow();
+            return user;
+
+        } catch (Exception e) {
+            return null;
         }
-        return new LoginResponseDTO(false, "Invalid credentials", null);
-    }
-
-    public boolean validateLogin(String identifier, String plainPassword) {
-        // Fetch user by username or email
-        User user = userRepository.findByUsernameOrEmail(identifier,identifier)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Compare the plain password with the hashed password
-        return passwordBcyrpt.matches(plainPassword, user.getPassword());
     }
 }

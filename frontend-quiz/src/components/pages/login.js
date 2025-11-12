@@ -39,7 +39,7 @@ export default function LoginPage() {
     if(response.status === 200) {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
-      console.log(response.data.user);
+      console.log("User: ",response.data.user, "Token: ",response.data.token);
       login(response.data.user);
       navigate("/");
     } else {

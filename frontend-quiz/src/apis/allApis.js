@@ -4,7 +4,10 @@ const baseUrl = `http://localhost:8080`;
 
 async function apiCall(method, endpoint, data = null, headers = {}) {
     const url = `${baseUrl}${endpoint}`;
-    const defaultHeaders = { 'Content-Type': 'application/json', };
+    const defaultHeaders = {
+        'Content-Type': 'application/json',
+        ...(localStorage.getItem('token') && { Authorization: `Bearer ${localStorage.getItem('token')}` }),
+    };
     const config = { method, url, headers: { ...defaultHeaders, ...headers }, ...(data && { data: data }) };
     try {
         const start = performance.now();
@@ -36,11 +39,11 @@ Ensure each question has exactly 4 options (a-d). In all string fields (especial
 }
 
 async function singupUserApi(data) {
-    return apiCall('POST', `/v1-api/users/signup`, data);
+    return apiCall('POST', `/v1-api/auth/users/signup`, data);
 }
 
 async function loginUserApi(data) {
-    return apiCall('POST', `/v1-api/users/login`, data);
+    return apiCall('POST', `/v1-api/auth/users/login`, data);
 }
 
 async function postGoogleApi(token) {
