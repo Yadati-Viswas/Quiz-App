@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import Layout from "../Layout";
+import Layout from "../Layout.jsx";
 import { motion } from "framer-motion";
 import { useDarkMode } from "../../contexts/DarkModeContextProvider";
 import { useNavigate } from "react-router-dom";
