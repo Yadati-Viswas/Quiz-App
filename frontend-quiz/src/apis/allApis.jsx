@@ -46,8 +46,18 @@ async function loginUserApi(data) {
     return apiCall('POST', `/v1-api/auth/users/login`, data);
 }
 
+async function createQuizApi(data) {
+    return apiCall('POST', `/v1-api/quiz/create`, data);
+}
+
+async function joinQuizApi(referralCode) {
+    return apiCall('POST', `/v1-api/quiz/join`, { referralCode });
+}
+
 async function postGoogleApi(token) {
   return apiCall('POST', '/users/google-login', { token });
 }
 
-export { getQuizQuestionsApi ,singupUserApi, loginUserApi, postGoogleApi };
+export { getQuizQuestionsApi ,singupUserApi, loginUserApi, postGoogleApi, createQuizApi, 
+    joinQuizApi
+ };

@@ -4,6 +4,8 @@ import Layout from "../Layout";
 import { useDarkMode } from "../../contexts/DarkModeContextProvider";
 import { getQuizQuestionsApi } from "../../apis/allApis";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 const categories = [
   "HTML", "History", "JavaScript", "Java", "Python", "Math",
@@ -21,6 +23,7 @@ export default function StartQuizPage() {
   const [loading, setLoading] = useState(false);
   const [numberOfQuestions, setNumberOfQuestions] = useState(5);
   const Navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const handleCategoryClick = (cat) => {
     if(cat === undefined) {
@@ -78,8 +81,11 @@ export default function StartQuizPage() {
               className={`cursor-pointer rounded-xl p-6 text-center font-semibold transition
                 ${darkMode ? "bg-[#23272f] hover:bg-indigo-900" : "bg-white hover:bg-blue-100"}
                 shadow-md`}
-              onClick={() => handleCategoryClick(cat)}
-            >
+              onClick={() => {if (!isAuthenticated) {
+                    toast.error("You must be logged in to start a quiz.");
+                    Navigate("/login"); // Redirect to login page
+                    return;
+                  }handleCategoryClick(cat)}} >
               {cat}
             </motion.div>
           ))}
@@ -184,8 +190,13 @@ export default function StartQuizPage() {
                     ? "bg-indigo-600 text-white hover:bg-indigo-700" 
                     : "bg-blue-600 text-white hover:bg-blue-700"
                 } transition-colors`}
-                onClick={() => handleCategoryClick()}
-            >
+                onClick={() => {
+                  if (!isAuthenticated) {
+                    toast.error("You must be logged in to start a quiz.");
+                    Navigate("/login"); // Redirect to login page
+                    return;
+                  }
+                  handleCategoryClick()}} >
                 Start Quiz
             </motion.button>
             </div>

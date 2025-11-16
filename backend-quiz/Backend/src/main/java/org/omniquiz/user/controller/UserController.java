@@ -10,6 +10,7 @@ import org.omniquiz.config.JwtService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,5 +46,9 @@ public class UserController {
         LoginResponseDTO loginResponse = new LoginResponseDTO(true,token, expiresIn, userCheck);
         return ResponseEntity.ok(loginResponse);
 
+    }
+
+    public User getUserDetails(@AuthenticationPrincipal User user){
+        return user;
     }
 }

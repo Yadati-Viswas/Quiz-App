@@ -8,8 +8,11 @@ import QuizStartedPage from "./components/pages/quizStarted";
 import SignupPage from "./components/pages/signup";
 import LoginPage from "./components/pages/login";
 import OmniQuizPage from "./components/pages/omniQuiz";
+import JoinQuizPage from "./components/pages/joinQuiz";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { DarkModeContextProvider } from "./contexts/DarkModeContextProvider";
 import { AuthProvider } from "./contexts/AuthContext";
+import {ToastContainer, toast} from "react-toastify";
 // import CreateQuizPage from "./CreateQuizPage";
 
 export default function App() {
@@ -21,16 +24,17 @@ export default function App() {
             <Routes>
               <Route path="/"  element={<HomePage/>} />
               <Route path="/start-quiz" element={<StartQuizPage/>} />
-              <Route path="/create-quiz" element={<CreateQuizPage/>} />
+              <Route path="/create-quiz" element={<ProtectedRoute><CreateQuizPage/></ProtectedRoute>} />
               <Route path="/quiz-started" element= {<QuizStartedPage/>}/>
               <Route path="/signup" element={<SignupPage/>} />
               <Route path="/login" element={<LoginPage/>} />
               <Route path="/omni-quiz" element={<OmniQuizPage/>} />
-              {/* <Route path="/leaderboard" component={LeaderboardPage} />
-              <Route path="*" component={NotFoundPage} /> */}
+              <Route path="/join-quiz" element={<JoinQuizPage/>} />
+              {/*<Route path="*" component={NotFoundPage} /> */}
             </Routes>
           </Router>
         </DarkModeContextProvider>
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
       </AuthProvider>
     </div>
   );

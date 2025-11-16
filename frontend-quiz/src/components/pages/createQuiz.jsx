@@ -4,6 +4,7 @@ import Layout from "../Layout";
 import { useDarkMode } from "../../contexts/DarkModeContextProvider";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { createQuizApi } from "../../apis/allApis";
 
 export default function CreateQuizPage() {
   const { darkMode } = useDarkMode();
@@ -38,7 +39,7 @@ export default function CreateQuizPage() {
     setQuestions(updatedQuestions);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
     console.log(previewed);
     if(!previewed) {
       alert("Please preview the quiz before submitting.");
@@ -57,6 +58,13 @@ export default function CreateQuizPage() {
       }))
     };
     console.log("Quiz Data:", quizData);
+    const response = await createQuizApi(quizData);
+    if(response.status === 201) {
+      alert("Quiz created successfully!");
+    } else {
+      alert("Failed to create quiz: " + (response.data?.message || "Unknown error"));
+    }
+    
     alert("Quiz submitted! Check console for data.");
   }
   const handlePreview = () => {

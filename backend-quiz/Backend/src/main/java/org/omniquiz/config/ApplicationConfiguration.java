@@ -1,6 +1,5 @@
 package org.omniquiz.config;
 
-import org.omniquiz.user.model.User;
 import org.omniquiz.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

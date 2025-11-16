@@ -7,7 +7,6 @@ const ProfileDropdown = ({ darkMode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useAuth();
   const { logout } = useAuthNavigate();
-  
   return (
     <div className="relative">
       <button 

@@ -1,7 +1,5 @@
 package org.omniquiz.generatequiz.service;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.omniquiz.generatequiz.dto.GeneratedQuizQuestionsDTO;
 import org.springframework.ai.chat.model.ChatModel;
@@ -12,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
-public class GenerateQuizQuestionswithGeminiService {
+public class GenerateQuizQuestionsService {
     private final ChatModel chatModel;
     private final ObjectMapper mapper;
     private static final int MAX_REFINEMENT_ATTEMPTS = 2; // Limit refinement retries
@@ -36,7 +34,7 @@ public class GenerateQuizQuestionswithGeminiService {
             """;
 
     @Autowired
-    public GenerateQuizQuestionswithGeminiService(ChatModel chatModel) {
+    public GenerateQuizQuestionsService(ChatModel chatModel) {
         this.chatModel = chatModel;
         this.mapper = new ObjectMapper();
     }
