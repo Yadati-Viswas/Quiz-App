@@ -23,6 +23,8 @@ export default function LoginPage() {
       if (response.status === 200) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data));
+        const tokenExpiration = Date.now() + 60 * 60 * 1000; 
+        localStorage.setItem('tokenExpiration', tokenExpiration); 
         //console.log(response.data);
         login(response.data);
         navigate('/');
@@ -34,13 +36,12 @@ export default function LoginPage() {
       alert('Google Sign In was unsuccessful. Try again later');
   };
   const onSubmit = async (data) => {
-    //alert("Signup submitted (check console)");
     const response = await loginUserApi(data);
     if(response.status === 200) {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       console.log("User: ",response.data.user, "Token: ",response.data.token);
-      login(response.data.user);
+      login(response.data.user, response.data.token);
       navigate("/");
     } else {
       alert("Login failed: " + (response.data?.message || "Unknown error"));

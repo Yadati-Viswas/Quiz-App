@@ -22,7 +22,7 @@ public class GeneratedQuizQuestion {
     private String code;
 
     @ElementCollection
-    @CollectionTable(name = "quiz_question_option", joinColumns = @JoinColumn(name = "question_id"))
+    @CollectionTable(name = "generated_quiz_question_option", joinColumns = @JoinColumn(name = "question_id"))
     @Column(name = "option_text")
     @OrderColumn(name = "option_index")
     private List<String> options;

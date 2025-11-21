@@ -10,7 +10,7 @@ export default function ProtectedRoute({ children }) {
 
   if (!isAuthenticated) {
     if (!alertShown) {
-      toast.error("You must be logged in to access this page.");
+      toast.error("You must be logged in to access to create quiz.");
       setAlertShown(true);
     }
     return <Navigate to="/login" />;

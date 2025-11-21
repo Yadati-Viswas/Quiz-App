@@ -1,12 +1,13 @@
 import { ArrowRightIcon, AcademicCapIcon, SunIcon, MoonIcon, Cog6ToothIcon, ClockIcon, ArrowUpIcon, ArrowRightOnRectangleIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
 import { useState } from 'react';
-import { useAuth, useAuthNavigate } from '../contexts/AuthContext';
+import { useAuth, useAuthNavigate } from '../contexts/AuthContext.jsx';
 
 const ProfileDropdown = ({ darkMode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useAuth();
   const { logout } = useAuthNavigate();
+  if (!user) return null;
   return (
     <div className="relative">
       <button 
@@ -113,7 +114,7 @@ const MegaMenuDropdown = ({ title, items, darkMode = false }) => {
 };
 
 function Navbar({ darkMode, toggleDarkMode}) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated,user } = useAuth();
 
   return (
     <div>
@@ -151,12 +152,16 @@ function Navbar({ darkMode, toggleDarkMode}) {
               { title: "Resource Library", desc: "Guides, Datasheets, Datasets, tools", link: "/resources" },
               { title: "Hiring Skills report", desc: "Key trends and skills in 2026", link: "/skills-report" },
             ]} darkMode={darkMode}/>
-          {isAuthenticated ? (
+          {isAuthenticated && user ? (
             <ProfileDropdown darkMode={darkMode} />
           ) : (
             <>
-              <a href="/login"        className="hover:text-indigo-300">Login</a>
-              <a href="/signup"       className="hover:text-indigo-300">Signup</a>
+              <Link to="/login" className="hover:text-indigo-300">
+                Login
+              </Link>
+              <Link to="/signup" className="hover:text-indigo-300">
+                Signup
+              </Link>
             </>
           )}
 

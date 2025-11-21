@@ -1,6 +1,5 @@
 package org.omniquiz.generatequiz.controller;
 
-import jakarta.transaction.Transactional;
 import org.omniquiz.generatequiz.dto.GenerateQuizRequest;
 import org.omniquiz.generatequiz.dto.GeneratedQuizQuestionsDTO;
 import org.omniquiz.generatequiz.model.GeneratedQuiz;
@@ -21,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import jakarta.transaction.Transactional;
 
 @RestController
 @RequestMapping("/v1-api/quiz")
@@ -28,11 +28,6 @@ public class GenerateQuizQuestionsController {
     private final GenerateQuizQuestionsService generateQuizQuestionsService;
 
     private User user;
-
-    @Autowired
-    private GeneratedQuizRepository generatedQuizRepository;
-    @Autowired
-    private GeneratedQuizQuestionRepository generatedQuizQuestionRepository;
 
     @Autowired
     public GenerateQuizQuestionsController(
@@ -59,13 +54,12 @@ public class GenerateQuizQuestionsController {
             System.out.println("Regex failed to match prompt: " + prompt);
             return ResponseEntity.badRequest().body("Prompt must specify number of questions (e.g., 'Generate 50 questions')");
         }
-        List<GeneratedQuizQuestionsDTO> questions = getAllGeneratedQuestions(prompt);
-        saveGeneratedQuestions(questions, user);
+        List<GeneratedQuizQuestionsDTO> questions = getAllGeneratedQuestions(prompt,totalQuestions);
+        generateQuizQuestionsService.saveGeneratedQuestions(questions, user);
         return ResponseEntity.ok(questions);
     }
 
-    public List<GeneratedQuizQuestionsDTO> getAllGeneratedQuestions(String prompt) {
-        int totalQuestions = 5;
+    public List<GeneratedQuizQuestionsDTO> getAllGeneratedQuestions(String prompt, int totalQuestions) {
         int batchSize = 5;
         int totalBatches = totalQuestions / batchSize;
         int remainingQuestions = totalQuestions % batchSize;
@@ -99,33 +93,9 @@ public class GenerateQuizQuestionsController {
                 System.out.println("Batch Prompt: " + batchPrompt);
                 futures.add(CompletableFuture.supplyAsync(() -> generateQuizQuestionsService.generateContent(batchPrompt)));
             }
-            questions.add((GeneratedQuizQuestionsDTO) futures.stream().map(CompletableFuture::join).flatMap(List::stream).collect(Collectors.toList()));
         }
         return  questions;
     }
 
-    @Transactional
-    public void saveGeneratedQuestions(List<GeneratedQuizQuestionsDTO> questions, User user) {
 
-        String title = questions.get(0).getTitle();
-        GeneratedQuiz quiz = new GeneratedQuiz();
-        quiz.setTitle(title);
-        quiz.setUser(user);
-        quiz.setCreatedAt(LocalDateTime.now());
-
-        quiz = generatedQuizRepository.save(quiz);
-        for (GeneratedQuizQuestionsDTO question : questions) {
-            GeneratedQuizQuestion q = new GeneratedQuizQuestion();
-            q.setQuestion(question.getQuestion());
-            q.setCode(question.getCode());
-            q.setOptions(question.getOptions());
-            q.setAnswer(question.getAnswer());
-            q.setExplanation(question.getExplanation());
-            q.setUser(user);
-            q.setGeneratedQuiz(quiz);
-
-            quiz.addQuestion(q);
-        }
-        generatedQuizRepository.save(quiz);
-    }
 }

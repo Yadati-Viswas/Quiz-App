@@ -1,16 +1,29 @@
 package org.omniquiz.generatequiz.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.omniquiz.generatequiz.dto.GeneratedQuizQuestionsDTO;
+import org.omniquiz.generatequiz.model.GeneratedQuiz;
+import org.omniquiz.generatequiz.model.GeneratedQuizQuestion;
+import org.omniquiz.generatequiz.repository.GeneratedQuizQuestionRepository;
+import org.omniquiz.generatequiz.repository.GeneratedQuizRepository;
+import org.omniquiz.user.model.User;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
 @Service
 public class GenerateQuizQuestionsService {
+
+    @Autowired
+    private GeneratedQuizRepository generatedQuizRepository;
+    @Autowired
+    private GeneratedQuizQuestionRepository generatedQuizQuestionRepository;
+    private User user;
     private final ChatModel chatModel;
     private final ObjectMapper mapper;
     private static final int MAX_REFINEMENT_ATTEMPTS = 2; // Limit refinement retries
@@ -55,7 +68,29 @@ public class GenerateQuizQuestionsService {
         }
     }
 
+    @Transactional
+    public void saveGeneratedQuestions(List<GeneratedQuizQuestionsDTO> questions, User user) {
 
+        String title = questions.get(0).getTitle();
+        GeneratedQuiz quiz = new GeneratedQuiz();
+        quiz.setTitle(title);
+        quiz.setUser(user);
+        quiz.setCreatedAt(LocalDateTime.now());
 
+        quiz = generatedQuizRepository.save(quiz);
+        for (GeneratedQuizQuestionsDTO question : questions) {
+            GeneratedQuizQuestion q = new GeneratedQuizQuestion();
+            q.setQuestion(question.getQuestion());
+            q.setCode(question.getCode());
+            q.setOptions(question.getOptions());
+            q.setAnswer(question.getAnswer());
+            q.setExplanation(question.getExplanation());
+            q.setUser(user);
+            q.setGeneratedQuiz(quiz);
+
+            quiz.addQuestion(q);
+        }
+        generatedQuizRepository.save(quiz);
+    }
 
 }

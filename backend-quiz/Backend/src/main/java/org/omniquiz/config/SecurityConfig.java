@@ -33,9 +33,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors().and().csrf().disable()
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())).csrf().disable()
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/v1-api/auth/**").permitAll()
+                        .requestMatchers("/v1-api/quiz/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

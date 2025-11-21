@@ -8,24 +8,22 @@ import { createQuizApi } from "../../apis/allApis";
 
 export default function CreateQuizPage() {
   const { darkMode } = useDarkMode();
-  const [quizCategory, setQuizCategory] = useState("");
+  const [quizTitle, setQuizTitle] = useState("");
   const [quizRefferal, setQuizRefferal] = useState("");
   const [questions, setQuestions] = useState([
-    { title:"", question: "",code:"", options: ["", "", "", ""], explanation:"", correctIndex: null }
+    { question: "",code:"", options: ["", "", "", ""], explanation:"", correctIndex: null }
   ]);
   const [showPreview, setShowPreview] = useState(false);
   const [previewed, setPreviewed] = useState(false);
 
   const handleAddQuestion = () => {
-    setQuestions([...questions, { title:"", question: "",code:"", options: ["", "", "", ""], explanation:"", correctIndex: null }]);
+    setQuestions([...questions, { question: "",code:"", options: ["", "", "", ""], explanation:"", correctIndex: null }]);
   };
 
   const handleQuestionChange = (index, field, value) => {
     const updatedQuestions = [...questions];
     if (field === "question") {
       updatedQuestions[index].question = value;
-    } else if (field === "title") {
-      updatedQuestions[index].title = value;
     } else if (field === "code") {
       updatedQuestions[index].code = value;
     } else if (field.startsWith("option")) {
@@ -46,10 +44,9 @@ export default function CreateQuizPage() {
       return;
     }
     const quizData = {
-      category: quizCategory,
+      title: quizTitle,
       refferal: quizRefferal,
       questions: questions.map(q => ({
-        title: q.title,
         question: q.question,
         code: q.code,
         explanation: q.explanation,
@@ -59,7 +56,7 @@ export default function CreateQuizPage() {
     };
     console.log("Quiz Data:", quizData);
     const response = await createQuizApi(quizData);
-    if(response.status === 201) {
+    if(response.status === 200) {
       alert("Quiz created successfully!");
     } else {
       alert("Failed to create quiz: " + (response.data?.message || "Unknown error"));
@@ -68,8 +65,8 @@ export default function CreateQuizPage() {
     alert("Quiz submitted! Check console for data.");
   }
   const handlePreview = () => {
-    if(quizCategory.trim() === "") {
-      alert("Please enter quiz category.");
+    if(quizTitle.trim() === "") {
+      alert("Please enter quiz Title.");
       return;
     }
     if(questions.length === 0) {
@@ -112,7 +109,7 @@ export default function CreateQuizPage() {
         <div className={`mb-4 text-sm ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
           <div className={`p-3 rounded ${darkMode ? "bg-[#1f2937] border border-gray-600" : "bg-gray-50 border border-gray-200"}`}>
             <strong className={`${darkMode ? "text-yellow-300" : "text-red-600"} mr-2`}>Note:</strong>
-            Quiz Category, Question, Options, Choosing answer and Explanation are required fields.
+            Quiz Title, Question, Options, Choosing answer and Explanation are required fields.
             <div className="mt-1 text-xs">Required fields are validated on Preview/Submit — please fill them before continuing.</div>
           </div>
         </div>
@@ -120,14 +117,14 @@ export default function CreateQuizPage() {
           <div className="flex flex-col md:flex-row md:space-x-4">
             <div className="w-full md:w-1/2 mb-6">
               <label className="block text-sm mb-1">
-                Quiz Category
+                Quiz Title
                 <span className="text-red-600 ml-1" aria-hidden="true">*</span>
               </label>
               <input
                 type="text"
-                placeholder="Quiz Category"
-                value={quizCategory}
-                onChange={(e) => setQuizCategory(e.target.value)}
+                placeholder="Quiz Title"
+                value={quizTitle}
+                onChange={(e) => setQuizTitle(e.target.value)}
                 aria-required="true"
                 className={`w-full p-3 rounded-lg border ${darkMode ? "bg-[#23272f] border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"} focus:outline-none focus:ring-2 focus:ring-blue-500`}
               />
@@ -148,10 +145,18 @@ export default function CreateQuizPage() {
           {questions.map((q, idx) => (
             <div key={idx} className={`mb-8 p-6 rounded-lg border ${darkMode ? "bg-[#23272f] border-gray-600" : "bg-white border-gray-300"}`}>
               <div className="flex items-center mb-4">
-                <h3 className="text-xl font-semibold">{`Title:`}</h3>
-                <input type="text" placeholder="Question Topic (optional)" onChange={ (e) => 
-                  handleQuestionChange(idx, "title", e.target.value)} value={q.title} className={`w-80 p-2 ml-4 rounded-lg border 
-                  ${darkMode ? "bg-[#374151] border-gray-600 text-white" : "bg-white border-gray-300 text-black"} focus:outline-none focus:ring-2 focus:ring-blue-500`} />
+                <label className="text-md font-semibold mr-4">
+                  Question {idx + 1}
+                  <span className="text-red-600" aria-hidden="true">*</span>
+                </label>
+                <textarea rows={2}
+                  type="text"
+                  placeholder={`Question ${idx + 1}`}
+                  value={q.question}
+                  onChange={(e) => handleQuestionChange(idx, "question", e.target.value)}
+                  aria-required="true"
+                  className={`w-80 p-2 rounded-lg border ${darkMode ? "bg-[#374151] border-gray-600 text-white" : "bg-white border-gray-300 text-black"} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                />
               </div>
               <h3 className="text-lg text-left font-semibold mb-2">{`Enter Code for ${idx + 1}:`}</h3>  
               <textarea
@@ -161,20 +166,6 @@ export default function CreateQuizPage() {
                 className={`w-full p-3 mb-4 rounded-lg border ${darkMode ? "bg-[#374151] border-gray-600 text-white" : "bg-white border-gray-300 text-black"} focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 rows={4}
               />
-              <div className="flex items-center mb-4">
-                <label className="text-md font-semibold mr-4">
-                  Question {idx + 1}
-                  <span className="text-red-600" aria-hidden="true">*</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder={`Question ${idx + 1}`}
-                  value={q.question}
-                  onChange={(e) => handleQuestionChange(idx, "question", e.target.value)}
-                  aria-required="true"
-                  className={`w-80 p-2 rounded-lg border ${darkMode ? "bg-[#374151] border-gray-600 text-white" : "bg-white border-gray-300 text-black"} focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                />
-              </div>
               {q.options.map((opt, optIdx) => (
                 <div key={optIdx} className="flex items-center mb-3">
                   <input
@@ -214,22 +205,22 @@ export default function CreateQuizPage() {
               </div>
             </div>
           ))}
-          <div className="flex space-x-4">
+          <div className="flex items-center justify-between space-x-4">
             <button
               onClick={handleAddQuestion}
-              className={`px-6 py-3 rounded-lg font-semibold ${darkMode ? "bg-indigo-600 hover:bg-indigo-700 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"} transition`}
+              className={`hover:cursor-pointer px-6 py-3 rounded-lg font-semibold ${darkMode ? "bg-indigo-600 hover:bg-indigo-700 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"} transition`}
             >
               Add Question
             </button>
             <button
               onClick={handlePreview}
-              className={`px-6 py-3 rounded-lg font-semibold ${darkMode ? "bg-indigo-600 hover:bg-indigo-700 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"} transition`}
+              className={`hover:cursor-pointer px-6 py-3 rounded-lg font-semibold ${darkMode ? "bg-indigo-600 hover:bg-indigo-700 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"} transition`}
             >
               Preview Quiz
             </button>
             <button
               onClick={handleSubmit}
-              className={`px-6 py-3 rounded-lg font-semibold ${darkMode ? "bg-purple-600 hover:bg-purple-700 text-white" : "bg-purple-600 hover:bg-purple-700 text-white"} transition`}
+              className={`hover:cursor-pointer px-6 py-3 rounded-lg font-semibold ${darkMode ? "bg-purple-600 hover:bg-purple-700 text-white" : "bg-purple-600 hover:bg-purple-700 text-white"} transition`}
             >
               Submit Quiz
             </button>
@@ -252,10 +243,9 @@ export default function CreateQuizPage() {
               exit={{ scale: 0.8, opacity: 0 }}
               className={`${darkMode ? "bg-[#23272f] text-white" : "bg-white text-gray-900"} p-6 rounded-lg max-w-3xl w-full max-h-full overflow-y-auto`}
             >
-              <h2 className={`text-2xl font-bold mb-4 ${darkMode ? "bg-[#23272f] border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"}`}>Quiz Preview: {quizCategory}</h2>
+              <h2 className={`text-2xl font-bold mb-4 ${darkMode ? "bg-[#23272f] border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"}`}>Quiz Preview: {quizTitle}</h2>
               {questions.map((q, idx) => (
                 <div key={idx} className="mb-6">
-                  <h3 className="font-semibold mb-2">{`Q${idx + 1}: ${q.title}`}</h3>
                   <h3 className="font-semibold mb-2">{`Q${idx + 1}: ${q.question}`}</h3>
                   {q.code && q.code.toString().trim() !== "" && (
                     <div className="mb-4">
